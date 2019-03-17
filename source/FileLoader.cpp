@@ -642,6 +642,8 @@ void FileLoader::LoadNode(ImportStream& is)
         if (m_version > 15402) {
             LoadUsePassHelper(is);
         }
+
+        node.vars.insert({ "light_model", Variant(static_cast<int>(current_light_model)) });
     }
         break;
     }
