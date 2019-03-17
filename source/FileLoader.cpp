@@ -8,6 +8,7 @@
 #include <fstream>
 
 #include <boost/algorithm/string.hpp>
+#include <boost/filesystem.hpp>
 
 #include <rttr/enumeration.h>
 
@@ -19,6 +20,10 @@ namespace aseimp
 
 void FileLoader::LoadAsset(const std::string& filepath)
 {
+    if (!boost::filesystem::exists(filepath)) {
+        return;
+    }
+
     auto root = YAML::LoadFile(filepath);
 
     auto mono = root["MonoBehaviour"];
