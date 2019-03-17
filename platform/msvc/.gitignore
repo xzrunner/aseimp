@@ -1,0 +1,5 @@
+aseimp/
+projects/*
+
+!projects/aseimp.vcxproj
+!projects/aseimp.vcxproj.filters
