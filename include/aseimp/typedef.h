@@ -68,6 +68,7 @@ enum class NodeClass
     // Miscellaneous
     SetLocalVar,                // Forces a local variable to be written with the given name. Can then be fetched at any place with a <b>Get Local Var</b> node.
     GetLocalVar,                // Use a registered local variable
+    CustomExpression,           // Creates a custom expression or function if <b>return</b> is detected in the written code.
 
     // Tools
     Commentary,                 // Commentary
@@ -179,6 +180,14 @@ enum class WirePortDataType
     SAMPLER3D = 1 << 12,
     SAMPLERCUBE = 1 << 13,
     UINT = 1 << 14
+};
+
+// WirePort
+enum class VariableQualifiers
+{
+    In = 0,
+    Out,
+    InOut
 };
 
 // StaticSwitch

@@ -357,6 +357,58 @@ void FileLoader::LoadNode(ImportStream& is)
         }
     }
         break;
+    case NodeClass::CustomExpression:
+    {
+        std::string code = is.String();
+        int output_type_idx = is.Int32();
+
+        if (m_version > 12001) {
+            bool mode = is.Bool();
+        }
+
+        int count = is.Int32();
+        node.vars.insert({ "input_count", Variant(count) });
+        for (int i = 0; i < count; ++i)
+        {
+            bool foldout_value = is.Bool();
+            std::string name = is.String();
+            auto type = ENUM_PARSE(is.String(), WirePortDataType);
+            std::string internal_data = is.String();
+            if (m_version > 12001) {
+                auto qualifier = ENUM_PARSE(is.String(), VariableQualifiers);
+            }
+            if (m_version > 15311) {
+                std::string custom_type = is.String();
+            }
+            if (m_version > 15607) {
+                auto precision = ENUM_PARSE(is.String(), PrecisionType);
+            }
+
+            node.vars.insert({ "input" + std::to_string(i), Variant(name) });
+        }
+
+        if (m_version > 7205) {
+            std::string custom_expression_name = is.String();
+        }
+
+        if (m_version > 14401) {
+            bool generate_unique_name = is.Bool();
+        }
+
+        if (m_version > 15102) {
+            bool auto_register_mode = is.Bool();
+        }
+
+        if (m_version > 15403) {
+            std::vector<std::string> dependencies;
+            int dependency_count = is.Int32();
+            dependencies.reserve(dependency_count);
+            for (int i = 0; i < dependency_count; ++i) {
+                dependencies.push_back(is.String());
+            }
+        }
+    }
+        break;
     case NodeClass::Function:
     {
         std::string filename     = is.String();

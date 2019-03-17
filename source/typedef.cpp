@@ -58,6 +58,7 @@ rttr::registration::enumeration<aseimp::NodeClass>("aseimp::NodeClass")
     // Miscellaneous
     rttr::value("RegisterLocalVarNode",         aseimp::NodeClass::SetLocalVar),
     rttr::value("GetLocalVarNode",              aseimp::NodeClass::GetLocalVar),
+    rttr::value("CustomExpressionNode",         aseimp::NodeClass::CustomExpression),
     // Tools
     rttr::value("CommentaryNode",               aseimp::NodeClass::Commentary),
     // Master
@@ -156,6 +157,13 @@ rttr::registration::enumeration<aseimp::WirePortDataType>("aseimp::WirePortDataT
     rttr::value("SAMPLER3D",   aseimp::WirePortDataType::SAMPLER3D),
     rttr::value("SAMPLERCUBE", aseimp::WirePortDataType::SAMPLERCUBE),
     rttr::value("UINT",        aseimp::WirePortDataType::UINT)
+);
+
+rttr::registration::enumeration<aseimp::VariableQualifiers>("aseimp::VariableQualifiers")
+(
+	rttr::value("In",    aseimp::VariableQualifiers::In),
+    rttr::value("Out",   aseimp::VariableQualifiers::Out),
+    rttr::value("InOut", aseimp::VariableQualifiers::InOut)
 );
 
 rttr::registration::enumeration<aseimp::KeywordModeType>("aseimp::KeywordModeType")
