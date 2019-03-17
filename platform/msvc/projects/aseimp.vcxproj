@@ -11,7 +11,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\include\aseimp\EnumParser.h" />
     <ClInclude Include="..\..\..\include\aseimp\FileLoader.h" />
     <ClInclude Include="..\..\..\include\aseimp\ImportStream.h" />
     <ClInclude Include="..\..\..\include\aseimp\typedef.h" />
