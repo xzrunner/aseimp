@@ -13,7 +13,6 @@
 #include <rttr/enumeration.h>
 
 #define ENUM_PARSE(type_str, type_name) rttr::type::get_by_name("aseimp::"#type_name).get_enumeration().name_to_value(type_str).get_value<aseimp::type_name>()
-//#define ENUM_PARSE(type_str, type_name) rttr::type::get_by_name(#type_name).get_enumeration().name_to_value(type_str).get_value<type_name>()
 
 namespace aseimp
 {
@@ -41,19 +40,6 @@ void FileLoader::LoadShader(const std::string& filepath)
     std::locale::global(std::locale(""));
     std::ifstream fin(filepath);
     std::locale::global(std::locale("C"));
-
-    //// find name
-    //std::string line;
-    //while (std::getline(fin, line))
-    //{
-    //    if (line.find("Shader") != std::string::npos)
-    //    {
-    //        auto s = line.find_first_of('"');
-    //        auto e = line.find_last_of('"');
-    //        auto name = line.substr(s, e - s);
-    //        break;
-    //    }
-    //}
 
     LoadASE(fin);
 
