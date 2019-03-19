@@ -107,6 +107,7 @@ void FileLoader::LoadNode(ImportStream& is)
 
     switch (node.cls)
     {
+        // Math Operators
     case NodeClass::Add:
         LoadDynamicTypeNode(is);
         break;
@@ -119,6 +120,46 @@ void FileLoader::LoadNode(ImportStream& is)
     case NodeClass::Divide:
         LoadDynamicTypeNode(is);
         break;
+
+        // Logical Operators
+    case NodeClass::Switch:
+    {
+        PropertyNode prop;
+        prop.Load(m_version, is);
+
+        int multi_compile = is.Int32();
+        if (m_version > 14403) {
+            int default_value = is.Int32();
+            if (m_version > 14101) {
+                int material_value = is.Int32();
+            }
+        } else {
+            int default_value = is.Bool() ? 1 : 0;
+            if (m_version > 14101) {
+                int material_value = is.Bool();
+            }
+        }
+        if (m_version > 13104)
+        {
+            bool create_toggle = is.Bool();
+            std::string current_keyword = is.String();
+        }
+        if (m_version > 14001) {
+            auto key_word_mode_type = ENUM_PARSE(is.String(), KeywordModeType);
+        }
+        if (m_version > 14403)
+        {
+            int key_word_enum_amount = is.Int32();
+            std::vector<std::string> default_key_word_names;
+            default_key_word_names.reserve(key_word_enum_amount);
+            for (int i = 0; i < key_word_enum_amount; ++i) {
+                default_key_word_names.push_back(is.String());
+            }
+        }
+    }
+        break;
+
+        // Functions
     case NodeClass::Input:
     {
         std::string input_name = is.String();
@@ -144,6 +185,29 @@ void FileLoader::LoadNode(ImportStream& is)
         node.vars.insert({ "name", Variant(output_name) });
     }
         break;
+    case NodeClass::Function:
+    {
+        std::string filename     = is.String();
+        int         order_index  = is.Int32();
+        std::string header_title = is.String();
+
+        if (m_version > 7203) {
+            int function_graph_id = is.Int32();
+        }
+
+        if (m_version > 13704) {
+            std::string function_guid = is.String();
+        }
+
+        if (m_version > 14203) {
+            std::string read_options_helper = is.String();
+        }
+
+        node.vars.insert({ "filename", Variant(filename) });
+    }
+        break;
+
+        // Constants And Properties
     case NodeClass::Float:
     {
         PropertyNode prop;
@@ -220,6 +284,8 @@ void FileLoader::LoadNode(ImportStream& is)
         node.vars.insert({ "w", Variant(default_value[3]) });
     }
         break;
+
+        // Camera And Screen
     case NodeClass::ViewDirection:
         if (m_version > 2402) {
             auto view_dir_space = ENUM_PARSE(is.String(), ViewSpace);
@@ -230,10 +296,88 @@ void FileLoader::LoadNode(ImportStream& is)
             node.vars.insert({ "safe_normalize", Variant(safe_normalize) });
         }
         break;
+
+        // Light
     case NodeClass::WorldSpaceLightDir:
         if (m_version > 15201) {
             bool safe_normalize = is.Bool();
         }
+        break;
+    case NodeClass::IndirectDiffuseLighting:
+        if (m_version > 13002) {
+            auto normal_space = ENUM_PARSE(is.String(), ViewSpace);
+        }
+        break;
+    case NodeClass::IndirectSpecularLight:
+        if (m_version > 13002) {
+            auto normal_space = ENUM_PARSE(is.String(), ViewSpace);
+        }
+        break;
+
+        // Vector Operators
+    case NodeClass::ChannelMask:
+    {
+        bool rgba[4];
+        for (int i = 0; i < 4; ++i) {
+            rgba[i] = is.Bool();
+        }
+        node.vars.insert({ "r", Variant(rgba[0]) });
+        node.vars.insert({ "g", Variant(rgba[1]) });
+        node.vars.insert({ "b", Variant(rgba[2]) });
+        node.vars.insert({ "a", Variant(rgba[3]) });
+    }
+        break;
+    case NodeClass::DotProduct:
+        LoadDynamicTypeNode(is);
+        break;
+    case NodeClass::Combine:
+    {
+        auto selected_output_type = ENUM_PARSE(is.String(), WirePortDataType);
+        //for (int i = 0; i < 4; ++i) {
+        //    int float_internal_data = is.Int32();
+        //}
+    }
+        break;
+
+        // UV Coordinates
+    case NodeClass::TexCoords:
+    {
+        int texcoord_channel = is.Int32();
+        if (m_version > 2402) {
+            if (m_version > 2404) {
+                int ref_node_id = is.Int32();
+            } else {
+                int ref_array_id = is.Int32();
+            }
+        }
+        if (m_version > 5001) {
+            int texcoord_size = is.Int32();
+        }
+
+        // for ReadInputDataFromString
+        assert(m_version > 7003);
+    }
+        break;
+
+        // Textures
+    case NodeClass::Tex2DAsset:
+    {
+        PropertyNode prop;
+        prop.Load(m_version, is);
+
+        std::string default_tex_guid = is.String();
+        if (m_version > 14101) {
+            std::string material_tex_guid = is.String();
+        }
+        bool is_normal_map = is.Bool();
+        auto default_tex_value = ENUM_PARSE(is.String(), TexturePropertyValues);
+        auto auto_cast_mode = ENUM_PARSE(is.String(), AutoCastType);
+        if (m_version > 15306) {
+            auto current_type = ENUM_PARSE(is.String(), TextureType);
+        } else {
+            auto current_type = TextureType::Texture2D;
+        }
+    }
         break;
     case NodeClass::SampleTex2D:
     {
@@ -267,59 +411,20 @@ void FileLoader::LoadNode(ImportStream& is)
         }
     }
         break;
-    case NodeClass::ChannelMask:
+    case NodeClass::TextureTransform:
     {
-        bool rgba[4];
-        for (int i = 0; i < 4; ++i) {
-            rgba[i] = is.Bool();
-        }
-        node.vars.insert({ "r", Variant(rgba[0]) });
-        node.vars.insert({ "g", Variant(rgba[1]) });
-        node.vars.insert({ "b", Variant(rgba[2]) });
-        node.vars.insert({ "a", Variant(rgba[3]) });
+        int reference_node_id = is.Int32();
     }
         break;
-    case NodeClass::Commentary:
-    {
-        const float width  = is.Float();
-        const float height = is.Float();
 
-        auto comment_text = is.String();
-
-        std::vector<int> children;
-        int child_n = is.Int32();
-        children.reserve(child_n);
-        for (int i = 0; i < child_n; ++i) {
-            children.push_back(is.Int32());
-        }
-
-        if (m_version > 5004) {
-            std::string title_text = is.String();
-        }
-
-        if (m_version > 12002)
-        {
-            auto& color_channels_str = is.String();
-            std::vector<std::string> sub_tokens;
-            boost::split(sub_tokens, color_channels_str, boost::is_any_of(","));
-            assert(sub_tokens.size() == 4);
-
-            int r = std::atoi(sub_tokens[0].c_str());
-            int g = std::atoi(sub_tokens[1].c_str());
-            int b = std::atoi(sub_tokens[2].c_str());
-            int a = std::atoi(sub_tokens[3].c_str());
-        }
-
-        node.vars.insert({ "width",  Variant(width) });
-        node.vars.insert({ "height", Variant(height) });
-        node.vars.insert({ "text",   Variant(comment_text) });
-    }
-        break;
+        // Surface Data
     case NodeClass::WorldNormalVector:
         if (m_version > 14202) {
             bool normalize = is.Bool();
         }
         break;
+
+        // Miscellaneous
     case NodeClass::SetLocalVar:
     {
         auto& var_name = is.String();
@@ -400,126 +505,46 @@ void FileLoader::LoadNode(ImportStream& is)
         }
     }
         break;
-    case NodeClass::Function:
+
+        // Tools
+    case NodeClass::Commentary:
     {
-        std::string filename     = is.String();
-        int         order_index  = is.Int32();
-        std::string header_title = is.String();
+        const float width  = is.Float();
+        const float height = is.Float();
 
-        if (m_version > 7203) {
-            int function_graph_id = is.Int32();
-        }
+        auto comment_text = is.String();
 
-        if (m_version > 13704) {
-            std::string function_guid = is.String();
-        }
-
-        if (m_version > 14203) {
-            std::string read_options_helper = is.String();
+        std::vector<int> children;
+        int child_n = is.Int32();
+        children.reserve(child_n);
+        for (int i = 0; i < child_n; ++i) {
+            children.push_back(is.Int32());
         }
 
-        node.vars.insert({ "filename", Variant(filename) });
-    }
-        break;
-    case NodeClass::DotProduct:
-        LoadDynamicTypeNode(is);
-        break;
-    case NodeClass::Tex2DAsset:
-    {
-        PropertyNode prop;
-        prop.Load(m_version, is);
-
-        std::string default_tex_guid = is.String();
-        if (m_version > 14101) {
-            std::string material_tex_guid = is.String();
-        }
-        bool is_normal_map = is.Bool();
-        auto default_tex_value = ENUM_PARSE(is.String(), TexturePropertyValues);
-        auto auto_cast_mode = ENUM_PARSE(is.String(), AutoCastType);
-        if (m_version > 15306) {
-            auto current_type = ENUM_PARSE(is.String(), TextureType);
-        } else {
-            auto current_type = TextureType::Texture2D;
-        }
-    }
-        break;
-    case NodeClass::TexCoords:
-    {
-        int texcoord_channel = is.Int32();
-        if (m_version > 2402) {
-            if (m_version > 2404) {
-                int ref_node_id = is.Int32();
-            } else {
-                int ref_array_id = is.Int32();
-            }
-        }
-        if (m_version > 5001) {
-            int texcoord_size = is.Int32();
+        if (m_version > 5004) {
+            std::string title_text = is.String();
         }
 
-        // for ReadInputDataFromString
-        assert(m_version > 7003);
-    }
-        break;
-    case NodeClass::TextureTransform:
-    {
-        int reference_node_id = is.Int32();
-    }
-        break;
-    case NodeClass::IndirectDiffuseLighting:
-        if (m_version > 13002) {
-            auto normal_space = ENUM_PARSE(is.String(), ViewSpace);
-        }
-        break;
-    case NodeClass::IndirectSpecularLight:
-        if (m_version > 13002) {
-            auto normal_space = ENUM_PARSE(is.String(), ViewSpace);
-        }
-        break;
-    case NodeClass::Combine:
-    {
-        auto selected_output_type = ENUM_PARSE(is.String(), WirePortDataType);
-        //for (int i = 0; i < 4; ++i) {
-        //    int float_internal_data = is.Int32();
-        //}
-    }
-        break;
-    case NodeClass::Switch:
-    {
-        PropertyNode prop;
-        prop.Load(m_version, is);
-
-        int multi_compile = is.Int32();
-        if (m_version > 14403) {
-            int default_value = is.Int32();
-            if (m_version > 14101) {
-                int material_value = is.Int32();
-            }
-        } else {
-            int default_value = is.Bool() ? 1 : 0;
-            if (m_version > 14101) {
-                int material_value = is.Bool();
-            }
-        }
-        if (m_version > 13104)
+        if (m_version > 12002)
         {
-            bool create_toggle = is.Bool();
-            std::string current_keyword = is.String();
+            auto& color_channels_str = is.String();
+            std::vector<std::string> sub_tokens;
+            boost::split(sub_tokens, color_channels_str, boost::is_any_of(","));
+            assert(sub_tokens.size() == 4);
+
+            int r = std::atoi(sub_tokens[0].c_str());
+            int g = std::atoi(sub_tokens[1].c_str());
+            int b = std::atoi(sub_tokens[2].c_str());
+            int a = std::atoi(sub_tokens[3].c_str());
         }
-        if (m_version > 14001) {
-            auto key_word_mode_type = ENUM_PARSE(is.String(), KeywordModeType);
-        }
-        if (m_version > 14403)
-        {
-            int key_word_enum_amount = is.Int32();
-            std::vector<std::string> default_key_word_names;
-            default_key_word_names.reserve(key_word_enum_amount);
-            for (int i = 0; i < key_word_enum_amount; ++i) {
-                default_key_word_names.push_back(is.String());
-            }
-        }
+
+        node.vars.insert({ "width",  Variant(width) });
+        node.vars.insert({ "height", Variant(height) });
+        node.vars.insert({ "text",   Variant(comment_text) });
     }
         break;
+
+        // Master
     case NodeClass::StandardSurfaceOutput:
     {
         // OutputNode
