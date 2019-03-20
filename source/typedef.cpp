@@ -56,8 +56,8 @@ rttr::registration::enumeration<aseimp::NodeClass>("aseimp::NodeClass")
     // Surface Data
     rttr::value("WorldNormalVector",            aseimp::NodeClass::WorldNormalVector),
     // Miscellaneous
-    rttr::value("RegisterLocalVarNode",         aseimp::NodeClass::SetLocalVar),
-    rttr::value("GetLocalVarNode",              aseimp::NodeClass::GetLocalVar),
+    rttr::value("RegisterLocalVarNode",         aseimp::NodeClass::SetReference),
+    rttr::value("GetLocalVarNode",              aseimp::NodeClass::GetReference),
     rttr::value("CustomExpressionNode",         aseimp::NodeClass::CustomExpression),
     // Tools
     rttr::value("CommentaryNode",               aseimp::NodeClass::Commentary),

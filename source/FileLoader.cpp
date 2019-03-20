@@ -425,7 +425,7 @@ void FileLoader::LoadNode(ImportStream& is)
         break;
 
         // Miscellaneous
-    case NodeClass::SetLocalVar:
+    case NodeClass::SetReference:
     {
         auto& var_name = is.String();
 
@@ -441,7 +441,7 @@ void FileLoader::LoadNode(ImportStream& is)
         node.vars.insert({ "name", Variant(var_name) });
     }
         break;
-    case NodeClass::GetLocalVar:
+    case NodeClass::GetReference:
     {
         if (m_version > 15) {
             int node_id = is.Int32();

@@ -66,8 +66,8 @@ enum class NodeClass
     WorldNormalVector,          // Per pixel world normal vector, accepts a <b>Normal</b> vector in tangent space (ie: normalmap)
 
     // Miscellaneous
-    SetLocalVar,                // Forces a local variable to be written with the given name. Can then be fetched at any place with a <b>Get Local Var</b> node.
-    GetLocalVar,                // Use a registered local variable
+    SetReference,               // Forces a local variable to be written with the given name. Can then be fetched at any place with a <b>Get Local Var</b> node.
+    GetReference,               // Use a registered local variable
     CustomExpression,           // Creates a custom expression or function if <b>return</b> is detected in the written code.
 
     // Tools
