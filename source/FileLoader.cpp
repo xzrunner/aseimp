@@ -197,13 +197,12 @@ void FileLoader::LoadNode(ImportStream& is)
 
         if (m_version > 13704) {
             std::string function_guid = is.String();
+            node.vars.insert({ "function_guid", Variant(function_guid) });
         }
 
         if (m_version > 14203) {
             std::string read_options_helper = is.String();
         }
-
-        node.vars.insert({ "filename", Variant(filename) });
     }
         break;
 
@@ -368,6 +367,7 @@ void FileLoader::LoadNode(ImportStream& is)
         std::string default_tex_guid = is.String();
         if (m_version > 14101) {
             std::string material_tex_guid = is.String();
+            node.vars.insert({ "material_tex_guid", Variant(material_tex_guid) });
         }
         bool is_normal_map = is.Bool();
         auto default_tex_value = ENUM_PARSE(is.String(), TexturePropertyValues);
@@ -377,6 +377,8 @@ void FileLoader::LoadNode(ImportStream& is)
         } else {
             auto current_type = TextureType::Texture2D;
         }
+
+        node.vars.insert({ "default_tex_guid", Variant(default_tex_guid) });
     }
         break;
     case NodeClass::SampleTex2D:
@@ -387,6 +389,7 @@ void FileLoader::LoadNode(ImportStream& is)
         std::string default_tex_guid = is.String();
         if (m_version > 14101) {
             std::string material_tex_guid = is.String();
+            node.vars.insert({ "material_tex_guid", Variant(material_tex_guid) });
         }
         bool use_semantics = is.Bool();
         int  texcoord_set  = is.Int32();
@@ -409,6 +412,8 @@ void FileLoader::LoadNode(ImportStream& is)
         if (m_version > 3201) {
             auto current_type = ENUM_PARSE(is.String(), TextureType);
         }
+
+        node.vars.insert({ "default_tex_guid", Variant(default_tex_guid) });
     }
         break;
     case NodeClass::TextureTransform:
@@ -447,6 +452,7 @@ void FileLoader::LoadNode(ImportStream& is)
             int node_id = is.Int32();
             if (m_version > 15500) {
                 std::string var_name = is.String();
+                node.vars.insert({ "name", Variant(var_name) });
             }
         } else {
             int reference_id = is.Int32();
@@ -523,6 +529,7 @@ void FileLoader::LoadNode(ImportStream& is)
 
         if (m_version > 5004) {
             std::string title_text = is.String();
+            node.vars.insert({ "title", Variant(title_text) });
         }
 
         if (m_version > 12002)
