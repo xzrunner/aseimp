@@ -8,19 +8,35 @@ RTTR_REGISTRATION
 rttr::registration::enumeration<aseimp::NodeClass>("aseimp::NodeClass")
 (
     // Math Operators
+    rttr::value("AbsOpNode",                    aseimp::NodeClass::Absolute),
 	rttr::value("SaturateNode",                 aseimp::NodeClass::Saturate),
+    rttr::value("SimpleMinOpNode",              aseimp::NodeClass::Minimum),
+    rttr::value("SimpleMaxOpNode",              aseimp::NodeClass::Maximum),
     rttr::value("SimpleAddOpNode",              aseimp::NodeClass::Add),
     rttr::value("SimpleSubtractOpNode",         aseimp::NodeClass::Subtract),
     rttr::value("SimpleMultiplyOpNode",         aseimp::NodeClass::Multiply),
     rttr::value("SimpleDivideOpNode",           aseimp::NodeClass::Divide),
+    rttr::value("OneMinusNode",                 aseimp::NodeClass::OneMinus),
     rttr::value("TFHCRemapNode",                aseimp::NodeClass::Remap),
-    rttr::value("Exp2OpNode",                   aseimp::NodeClass::Exponential),
+    rttr::value("Exp2OpNode",                   aseimp::NodeClass::Exp2),
+    rttr::value("ExpOpNode",                    aseimp::NodeClass::ExpE),
     rttr::value("PowerNode",                    aseimp::NodeClass::Power),
     rttr::value("ScaleAndOffsetNode",           aseimp::NodeClass::ScaleAndOffset),
     rttr::value("LerpOp",                       aseimp::NodeClass::Lerp),
     rttr::value("SmoothstepOpNode",             aseimp::NodeClass::Smoothstep),
+    rttr::value("FWidthOpNode",                 aseimp::NodeClass::FWidth),
+    rttr::value("SinOpNode",                    aseimp::NodeClass::Sine),
+    rttr::value("CosOpNode",                    aseimp::NodeClass::Cosine),
+    rttr::value("TanOpNode",                    aseimp::NodeClass::Tangent),
+    rttr::value("ASinOpNode",                   aseimp::NodeClass::Arcsine),
+    rttr::value("ACosOpNode",                   aseimp::NodeClass::Arccosine),
     // Logical Operators
+    rttr::value("TFHCCompareLower",             aseimp::NodeClass::CompareLess),
+    rttr::value("TFHCCompareEqual",             aseimp::NodeClass::CompareEqual),
+    rttr::value("TFHCCompareGreater",           aseimp::NodeClass::CompareGreater),
+    rttr::value("TFHCCompareNotEqual",          aseimp::NodeClass::CompareNotEqual),
     rttr::value("StaticSwitch",                 aseimp::NodeClass::Switch),
+    rttr::value("SwitchNode",                   aseimp::NodeClass::SwitchMulti),
     // Functions
     rttr::value("FunctionInput",                aseimp::NodeClass::Input),
     rttr::value("FunctionOutput",               aseimp::NodeClass::Output),
@@ -30,6 +46,8 @@ rttr::registration::enumeration<aseimp::NodeClass>("aseimp::NodeClass")
     rttr::value("Vector2Node",                  aseimp::NodeClass::Vector2),
     rttr::value("Vector3Node",                  aseimp::NodeClass::Vector3),
     rttr::value("Vector4Node",                  aseimp::NodeClass::Vector4),
+    rttr::value("PiNode",                       aseimp::NodeClass::PI),
+    rttr::value("ColorNode",                    aseimp::NodeClass::Color),
     // Image Effects
     rttr::value("HSVToRGBNode",                 aseimp::NodeClass::HSVToRGB),
     rttr::value("RGBToHSVNode",                 aseimp::NodeClass::RGBToHSV),
@@ -37,6 +55,7 @@ rttr::registration::enumeration<aseimp::NodeClass>("aseimp::NodeClass")
     rttr::value("ViewDirInputsCoordNode",       aseimp::NodeClass::ViewDirection),
     // Light
     rttr::value("WorldSpaceLightDirHlpNode",    aseimp::NodeClass::WorldSpaceLightDir),
+    rttr::value("LightAttenuation",             aseimp::NodeClass::LightAttenuation),
     rttr::value("LightColorNode",               aseimp::NodeClass::LightColor),
     rttr::value("IndirectDiffuseLighting",      aseimp::NodeClass::IndirectDiffuseLighting),
     rttr::value("IndirectSpecularLight",        aseimp::NodeClass::IndirectSpecularLight),
@@ -45,6 +64,20 @@ rttr::registration::enumeration<aseimp::NodeClass>("aseimp::NodeClass")
     rttr::value("ComponentMaskNode",            aseimp::NodeClass::ChannelMask),
     rttr::value("DotProductOpNode",             aseimp::NodeClass::DotProduct),
     rttr::value("DynamicAppendNode",            aseimp::NodeClass::Combine),
+    rttr::value("BreakToComponentsNode",        aseimp::NodeClass::Split),
+    rttr::value("TransformDirectionNode",       aseimp::NodeClass::TransformDirection),
+    rttr::value("LengthOpNode",                 aseimp::NodeClass::Length),
+    // Vertex Data
+    rttr::value("BitangentVertexDataNode",      aseimp::NodeClass::VertexBitangent),
+    rttr::value("NormalVertexDataNode",         aseimp::NodeClass::VertexNormal),
+    rttr::value("TangentVertexDataNode",        aseimp::NodeClass::VertexTangent),
+    // Surface Data
+    rttr::value("VertexBinormalNode",           aseimp::NodeClass::WorldBitangent),
+    rttr::value("WorldPosInputsNode",           aseimp::NodeClass::WorldPosition),
+    rttr::value("VertexTangentNode",            aseimp::NodeClass::WorldTangent),
+    // Matrix Operators
+    rttr::value("MatrixFromVectors",            aseimp::NodeClass::MatrixConstruction),
+    rttr::value("InverseOpNode",                aseimp::NodeClass::MatrixInverse),
     // Matrix Transform
     rttr::value("ViewMatrixNode",               aseimp::NodeClass::ViewMatrix),
     // UV Coordinates
@@ -52,6 +85,8 @@ rttr::registration::enumeration<aseimp::NodeClass>("aseimp::NodeClass")
     // Textures
     rttr::value("TexturePropertyNode",          aseimp::NodeClass::Tex2DAsset),
     rttr::value("SamplerNode",                  aseimp::NodeClass::SampleTex2D),
+    rttr::value("TriplanarNode",                aseimp::NodeClass::SampleTriplanar),
+    rttr::value("UnpackScaleNormalNode",        aseimp::NodeClass::UnpackScaleNormal),
     rttr::value("TextureTransformNode",         aseimp::NodeClass::TextureTransform),
     // Surface Data
     rttr::value("WorldNormalVector",            aseimp::NodeClass::WorldNormalVector),
@@ -59,6 +94,10 @@ rttr::registration::enumeration<aseimp::NodeClass>("aseimp::NodeClass")
     rttr::value("RegisterLocalVarNode",         aseimp::NodeClass::SetReference),
     rttr::value("GetLocalVarNode",              aseimp::NodeClass::GetReference),
     rttr::value("CustomExpressionNode",         aseimp::NodeClass::CustomExpression),
+    rttr::value("VertexToFragmentNode",         aseimp::NodeClass::VertexToFragment),
+    rttr::value("EncodeFloatRGBAHlpNode",       aseimp::NodeClass::EncodeFloatRGBA),
+    rttr::value("DecodeFloatRGBAHlpNode",       aseimp::NodeClass::DecodeFloatRGBA),
+
     // Tools
     rttr::value("CommentaryNode",               aseimp::NodeClass::Commentary),
     // Master
@@ -303,6 +342,33 @@ rttr::registration::enumeration<aseimp::AdditionalLineType>("aseimp::AdditionalL
     rttr::value("Define",  aseimp::AdditionalLineType::Define),
     rttr::value("Pragma",  aseimp::AdditionalLineType::Pragma),
     rttr::value("Custom",  aseimp::AdditionalLineType::Custom)
+);
+
+rttr::registration::enumeration<aseimp::TriplanarType>("aseimp::TriplanarType")
+(
+	rttr::value("Spherical",   aseimp::TriplanarType::Spherical),
+    rttr::value("Cylindrical", aseimp::TriplanarType::Cylindrical)
+);
+
+rttr::registration::enumeration<aseimp::TriplanarSpace>("aseimp::TriplanarSpace")
+(
+	rttr::value("Object", aseimp::TriplanarSpace::Object),
+    rttr::value("World",  aseimp::TriplanarSpace::World)
+);
+
+rttr::registration::enumeration<aseimp::TransformSpace>("aseimp::TransformSpace")
+(
+	rttr::value("Object",  aseimp::TransformSpace::Object),
+    rttr::value("World",   aseimp::TransformSpace::World),
+    rttr::value("View",    aseimp::TransformSpace::View),
+    rttr::value("Clip",    aseimp::TransformSpace::Clip),
+    rttr::value("Tangent", aseimp::TransformSpace::Tangent)
+);
+
+rttr::registration::enumeration<aseimp::InverseTangentType>("aseimp::InverseTangentType")
+(
+	rttr::value("Fast",    aseimp::InverseTangentType::Fast),
+    rttr::value("Precise", aseimp::InverseTangentType::Precise)
 );
 
 }

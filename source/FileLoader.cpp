@@ -108,6 +108,12 @@ void FileLoader::LoadNode(ImportStream& is)
     switch (node.cls)
     {
         // Math Operators
+    case NodeClass::Minimum:
+        LoadDynamicTypeNode(is);
+        break;
+    case NodeClass::Maximum:
+        LoadDynamicTypeNode(is);
+        break;
     case NodeClass::Add:
         LoadDynamicTypeNode(is);
         break;
@@ -122,6 +128,18 @@ void FileLoader::LoadNode(ImportStream& is)
         break;
 
         // Logical Operators
+    case NodeClass::CompareLess:
+        LoadDynamicTypeNode(is);
+        break;
+    case NodeClass::CompareEqual:
+        LoadDynamicTypeNode(is);
+        break;
+    case NodeClass::CompareGreater:
+        LoadDynamicTypeNode(is);
+        break;
+    case NodeClass::CompareNotEqual:
+        LoadDynamicTypeNode(is);
+        break;
     case NodeClass::Switch:
     {
         PropertyNode prop;
@@ -156,6 +174,12 @@ void FileLoader::LoadNode(ImportStream& is)
                 default_key_word_names.push_back(is.String());
             }
         }
+    }
+        break;
+    case NodeClass::SwitchMulti:
+    {
+        int current_selected_input = is.Int32();
+        int max_amount_inputs = is.Int32();
     }
         break;
 
@@ -283,6 +307,22 @@ void FileLoader::LoadNode(ImportStream& is)
         node.vars.insert({ "w", Variant(default_value[3]) });
     }
         break;
+    case NodeClass::Color:
+    {
+        PropertyNode prop;
+        prop.Load(m_version, is);
+
+        Color default_value = StringToColor(is.String());
+        if (m_version > 14101) {
+            Color material_value = StringToColor(is.String());
+        }
+        if (m_version > 15900) {
+            bool auto_gamma_to_linear_conversion = is.Bool();
+        } else {
+            bool auto_gamma_to_linear_conversion = false;
+        }
+    }
+        break;
 
         // Camera And Screen
     case NodeClass::ViewDirection:
@@ -335,6 +375,38 @@ void FileLoader::LoadNode(ImportStream& is)
         //for (int i = 0; i < 4; ++i) {
         //    int float_internal_data = is.Int32();
         //}
+    }
+        break;
+    case NodeClass::Split:
+    {
+        auto output_type = ENUM_PARSE(is.String(), WirePortDataType);
+    }
+        break;
+    case NodeClass::TransformDirection:
+    {
+        auto from = ENUM_PARSE(is.String(), TransformSpace);
+        auto to   = ENUM_PARSE(is.String(), TransformSpace);
+        bool normalize = is.Bool();
+        if (m_version > 15800) {
+            auto inverse_tangent_type = ENUM_PARSE(is.String(), InverseTangentType);
+        }
+    }
+        break;
+
+        // Vertex Data
+    case NodeClass::VertexTangent:
+        if (m_version > 16100) {
+            int size_option = is.Int32();
+        }
+        break;
+
+        // Matrix Operators
+    case NodeClass::MatrixConstruction:
+    {
+        auto selected_output_type = ENUM_PARSE(is.String(), WirePortDataType);
+        if (m_version > 15310) {
+            bool rows_from_vector = is.Bool();
+        }
     }
         break;
 
@@ -414,6 +486,38 @@ void FileLoader::LoadNode(ImportStream& is)
         }
 
         node.vars.insert({ "default_tex_guid", Variant(default_tex_guid) });
+    }
+        break;
+    case NodeClass::SampleTriplanar:
+    {
+        auto selected_triplanar_type = ENUM_PARSE(is.String(), TriplanarType);
+        auto selected_triplanar_space = ENUM_PARSE(is.String(), TriplanarSpace);
+        bool normal_correction = is.Bool();
+
+        std::string temp_top_inspector_name = is.String();
+        std::string temp_top_name = is.String();
+        auto temp_top_default_value = ENUM_PARSE(is.String(), TexturePropertyValues);
+        int temp_top_order_index = is.Int32();
+        std::string temp_top_default_texture_path = is.String();
+
+        std::string temp_mid_inspector_name = is.String();
+        std::string temp_mid_name = is.String();
+        auto temp_mid_default_value = ENUM_PARSE(is.String(), TexturePropertyValues);
+        int temp_mid_order_index = is.Int32();
+        std::string temp_mid_default_texture_path = is.String();
+
+        std::string temp_bot_inspector_name = is.String();
+        std::string temp_bot_name = is.String();
+        auto temp_bot_default_value = ENUM_PARSE(is.String(), TexturePropertyValues);
+        int temp_bot_order_index = is.Int32();
+        std::string temp_bot_default_texture_path = is.String();
+
+        if (m_version > 6102) {
+            std::string property_inspector_name = is.String();
+        }
+        if (m_version > 13701) {
+            bool array_support = is.Bool();
+        }
     }
         break;
     case NodeClass::TextureTransform:
