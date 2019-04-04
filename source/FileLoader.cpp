@@ -566,6 +566,7 @@ void FileLoader::LoadNode(ImportStream& is)
     case NodeClass::CustomExpression:
     {
         std::string code = is.String();
+        node.vars.insert({ "code", Variant(code) });
         int output_type_idx = is.Int32();
 
         if (m_version > 12001) {
@@ -574,12 +575,16 @@ void FileLoader::LoadNode(ImportStream& is)
 
         int count = is.Int32();
         node.vars.insert({ "input_count", Variant(count) });
+        node.inputs.resize(count);
         for (int i = 0; i < count; ++i)
         {
             bool foldout_value = is.Bool();
             std::string name = is.String();
+            node.inputs[i].name = name;
             auto type = ENUM_PARSE(is.String(), WirePortDataType);
+            node.inputs[i].data_type = type;
             std::string internal_data = is.String();
+            node.inputs[i].internal_data = internal_data;
             if (m_version > 12001) {
                 auto qualifier = ENUM_PARSE(is.String(), VariableQualifiers);
             }
@@ -589,12 +594,11 @@ void FileLoader::LoadNode(ImportStream& is)
             if (m_version > 15607) {
                 auto precision = ENUM_PARSE(is.String(), PrecisionType);
             }
-
-            node.vars.insert({ "input" + std::to_string(i), Variant(name) });
         }
 
         if (m_version > 7205) {
             std::string custom_expression_name = is.String();
+            node.vars.insert({ "custom_expression_name", Variant(custom_expression_name) });
         }
 
         if (m_version > 14401) {
@@ -1160,6 +1164,11 @@ FileLoader::Color FileLoader::StringToColor(const std::string& str)
 
 void FileLoader::Node::LoadNodePorts(int version, ImportStream& is)
 {
+    bool inputs_set_from_custom = false;
+    if (!inputs.empty()) {
+        inputs_set_from_custom = true;
+    }
+
     // ParentNode::ReadInputDataFromString
     int input_count = 0;
     if (version > 7003) {
@@ -1167,29 +1176,41 @@ void FileLoader::Node::LoadNodePorts(int version, ImportStream& is)
     } else {
 //        input_count = bp_node->GetAllOutput().size();
     }
-    inputs.resize(input_count);
+
+    if (inputs_set_from_custom) {
+        assert(inputs.size() == input_count);
+    } else {
+        inputs.resize(input_count);
+    }
     for (int i = 0; i < input_count; ++i)
     {
-        auto& dst = inputs[i];
+        InputPort ip;
         if (version < 5003)
         {
             if (version > 23) {
-                dst.data_type = ENUM_PARSE(is.String(), WirePortDataType);
+                ip.data_type = ENUM_PARSE(is.String(), WirePortDataType);
             }
-            dst.internal_data = is.String();
-            if (dst.editable && version >= 3100 && is.IsValid()) {
-                dst.name = is.String();
+            ip.internal_data = is.String();
+            if (ip.editable && version >= 3100 && is.IsValid()) {
+                ip.name = is.String();
             }
         }
         else
         {
-            dst.port_id       = is.Int32();
-            dst.data_type     = ENUM_PARSE(is.String(), WirePortDataType);
-            dst.internal_data = is.String();
-            dst.editable      = is.Bool();
-            if (dst.editable && is.IsValid()) {
-                dst.name = is.String();
+            ip.port_id       = is.Int32();
+            ip.data_type     = ENUM_PARSE(is.String(), WirePortDataType);
+            ip.internal_data = is.String();
+            ip.editable      = is.Bool();
+            if (ip.editable && is.IsValid()) {
+                ip.name = is.String();
             }
+        }
+
+        if (inputs_set_from_custom) {
+            inputs[i].port_id  = ip.port_id;
+            inputs[i].editable = ip.editable;
+        } else {
+            inputs[i] = ip;
         }
     }
 
